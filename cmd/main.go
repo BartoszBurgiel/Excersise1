@@ -81,6 +81,8 @@ func main() {
 					alarm.Stop()
 					fmt.Println("Alarm is armed")
 
+					fmt.Printf("%s and %s lock up the hose and leave", bob.Name, alice.Name)
+
 					done <- struct{}{}
 
 				}

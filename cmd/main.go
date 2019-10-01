@@ -35,11 +35,15 @@ func main() {
 	// Goroutine for Alice
 	go morningRoutine(alice, windowClosedC, fanOffC)
 
-	time.Sleep(time.Second * 7)
+	// "Wait" untill both persons are ready
+	<-bob.Ready
+	<-alice.Ready
 }
 
 // morning routine describes a morning routine for each person
 func morningRoutine(p person.Person, w, f chan bool) {
+	fmt.Println(p.Name, "starts getting ready")
+
 	p.GrabGlasses()
 	p.TightenBelt()
 
@@ -47,4 +51,8 @@ func morningRoutine(p person.Person, w, f chan bool) {
 	p.TurnOffTheFan(f)
 
 	p.PocketBelongings()
+
+	p.Ready <- struct{}{}
+
+	fmt.Println(p.Name, "is ready to go!")
 }

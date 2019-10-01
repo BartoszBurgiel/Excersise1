@@ -67,3 +67,13 @@ func (p Person) PocketBelongings() {
 	fmt.Printf("%s pockets the belongings \n It took %s %d seconds\n\n", p.Name, p.Name, dur)
 
 }
+
+// TightenBelt simulates a person tightenning their belt
+func (p Person) TightenBelt() {
+
+	dur := waitRandomTime(5, 40)
+	p.GettingReadyTime += dur
+
+	fmt.Printf("%s tightens the belt \n It took %s %d seconds\n\n", p.Name, p.Name, dur)
+
+}

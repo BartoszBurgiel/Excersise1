@@ -41,7 +41,7 @@ func main() {
 }
 
 // morning routine describes a morning routine for each person
-func morningRoutine(p person.Person, w, f chan bool) {
+func morningRoutine(p *person.Person, w, f chan bool) {
 	fmt.Printf("%s starts getting ready\n\n", p.Name)
 
 	p.GrabGlasses()
@@ -52,7 +52,6 @@ func morningRoutine(p person.Person, w, f chan bool) {
 
 	p.PocketBelongings()
 
+	fmt.Printf("%s is ready to go!\n %s spent %d seconds on getting ready\n", p.Name, p.Name, p.GettingReadyTime)
 	p.Ready <- struct{}{}
-
-	fmt.Printf("%s is ready to go!\n\n", p.Name)
 }

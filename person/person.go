@@ -13,14 +13,14 @@ type Person struct {
 }
 
 // NewPerson is a constructor
-func NewPerson(name string) Person {
-	return Person{name, 0, make(chan struct{})}
+func NewPerson(name string) *Person {
+	return &Person{name, 0, make(chan struct{})}
 }
 
 // Person behaviours
 
 // GrabGlasses simulates a person grabbing their glasses
-func (p Person) GrabGlasses() {
+func (p *Person) GrabGlasses() {
 	dur := waitRandomTime(5, 10)
 	p.GettingReadyTime += dur
 
@@ -28,7 +28,7 @@ func (p Person) GrabGlasses() {
 }
 
 // TideShoes simulates a person tiding their shoes
-func (p Person) TideShoes() {
+func (p *Person) TideShoes() {
 
 	dur := waitRandomTime(20, 35)
 	p.GettingReadyTime += dur
@@ -53,7 +53,7 @@ func (p Person) CloseWindow(c chan bool) {
 }
 
 // TurnOffTheFan simulates a person turning off the ceiling fan
-func (p Person) TurnOffTheFan(c chan bool) {
+func (p *Person) TurnOffTheFan(c chan bool) {
 
 	// check if fan is turned off already
 	if !<-c {
@@ -69,7 +69,7 @@ func (p Person) TurnOffTheFan(c chan bool) {
 }
 
 // PocketBelongings simulates a person pocketing their belongings
-func (p Person) PocketBelongings() {
+func (p *Person) PocketBelongings() {
 
 	dur := waitRandomTime(5, 40)
 	p.GettingReadyTime += dur
@@ -79,7 +79,7 @@ func (p Person) PocketBelongings() {
 }
 
 // TightenBelt simulates a person tightenning their belt
-func (p Person) TightenBelt() {
+func (p *Person) TightenBelt() {
 
 	dur := waitRandomTime(5, 12)
 	p.GettingReadyTime += dur

@@ -40,22 +40,32 @@ func (p Person) TideShoes() {
 // CloseWindow simulates a person closing the windows
 func (p Person) CloseWindow(c chan bool) {
 
-	dur := waitRandomTime(2, 5)
-	p.GettingReadyTime += dur
+	if !<-c {
 
-	fmt.Printf("%s closes the window \n It took %s %d seconds\n\n", p.Name, p.Name, dur)
-	c <- true
+		dur := waitRandomTime(2, 5)
+		p.GettingReadyTime += dur
+
+		fmt.Printf("%s closes the window \n It took %s %d seconds\n\n", p.Name, p.Name, dur)
+
+		// "mark" window as closed
+		c <- true
+	}
 }
 
 // TurnOffTheFan simulates a person turning off the ceiling fan
 func (p Person) TurnOffTheFan(c chan bool) {
 
-	dur := waitRandomTime(3, 6)
-	p.GettingReadyTime += dur
+	// check if fan is turned off already
+	if !<-c {
 
-	fmt.Printf("%s turns off the fan \n It took %s %d seconds\n\n", p.Name, p.Name, dur)
+		dur := waitRandomTime(3, 6)
+		p.GettingReadyTime += dur
 
-	c <- true
+		fmt.Printf("%s turns off the fan \n It took %s %d seconds\n\n", p.Name, p.Name, dur)
+
+		// "mark" fan as turned off
+		c <- true
+	}
 }
 
 // PocketBelongings simulates a person pocketing their belongings
@@ -71,7 +81,7 @@ func (p Person) PocketBelongings() {
 // TightenBelt simulates a person tightenning their belt
 func (p Person) TightenBelt() {
 
-	dur := waitRandomTime(5, 40)
+	dur := waitRandomTime(5, 12)
 	p.GettingReadyTime += dur
 
 	fmt.Printf("%s tightens the belt \n It took %s %d seconds\n\n", p.Name, p.Name, dur)

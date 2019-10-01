@@ -12,6 +12,12 @@ type Person struct {
 	Ready            chan struct{}
 }
 
+// NewPerson is a constructor
+func NewPerson(name string) Person {
+	return Person{name, 0, make(chan struct{})}
+}
+
+
 // Person behaviours
 
 // GrabGlasses simulates a person grabbing their glasses

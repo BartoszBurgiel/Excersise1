@@ -3,12 +3,15 @@ package main
 import (
 	"dailywalk/person"
 	"fmt"
+	"sync"
 	"time"
 )
 
 func main() {
 	fmt.Println("Concurrency Excersise 1")
 	fmt.Println("")
+
+	var gettingReadyWG sync.WaitGroup
 
 	// Bob person setup
 	bob := person.NewPerson("Bob")
@@ -21,27 +24,71 @@ func main() {
 	windowClosedC := make(chan bool)
 	fanOffC := make(chan bool)
 
+	gettingReadyWG.Add(1)
 	// Set windowClosedC and fanOffC to false by default
 	go func() {
 		windowClosedC <- false
 		fanOffC <- false
 
 		time.Sleep(time.Millisecond * 100)
+		gettingReadyWG.Done()
 	}()
 
+	gettingReadyWG.Add(2)
 	// Goroutine for Bob
-	go morningRoutine(bob, windowClosedC, fanOffC)
+	go morningRoutine(bob, windowClosedC, fanOffC, &gettingReadyWG)
 
 	// Goroutine for Alice
-	go morningRoutine(alice, windowClosedC, fanOffC)
+	go morningRoutine(alice, windowClosedC, fanOffC, &gettingReadyWG)
 
 	// "Wait" untill both persons are ready
 	<-bob.Ready
 	<-alice.Ready
+
+	// After all persons got ready start the alarm part
+	gettingReadyWG.Wait()
+
+	go func() {
+		// Arm the alarm
+		alarm := time.NewTicker(time.Millisecond)
+
+		var shoesWg sync.WaitGroup
+
+		ignitionTime := time.Now()
+
+		fmt.Println("Arming alarm")
+
+		shoesWg.Add(2)
+		go bob.TideShoes(&shoesWg)
+		go alice.TideShoes(&shoesWg)
+
+		// Whitespace
+		fmt.Println("")
+
+		for {
+
+			shoesWg.Wait()
+
+			select {
+			case <-alarm.C:
+
+				// Alarm is armed after 500ms
+				if time.Since(ignitionTime).Round(time.Millisecond) > 500 {
+
+					alarm.Stop()
+					fmt.Println("Alarm is armed")
+					return
+				}
+			}
+		}
+	}()
+
+	// :c
+	time.Sleep(time.Second)
 }
 
 // morning routine describes a morning routine for each person
-func morningRoutine(p *person.Person, w, f chan bool) {
+func morningRoutine(p *person.Person, w, f chan bool, wg *sync.WaitGroup) {
 	fmt.Printf("%s starts getting ready\n\n", p.Name)
 
 	p.GrabGlasses()
@@ -52,6 +99,7 @@ func morningRoutine(p *person.Person, w, f chan bool) {
 
 	p.PocketBelongings()
 
-	fmt.Printf("%s is ready to go!\n %s spent %d seconds on getting ready\n", p.Name, p.Name, p.GettingReadyTime)
+	fmt.Printf("%s is ready to go!\n %s spent %d seconds on getting ready\n\n", p.Name, p.Name, p.GettingReadyTime)
 	p.Ready <- struct{}{}
+	wg.Done()
 }

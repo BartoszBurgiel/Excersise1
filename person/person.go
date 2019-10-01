@@ -1,6 +1,9 @@
 package person
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 // Person struct represents a person
 // Name = person's name
@@ -28,13 +31,15 @@ func (p *Person) GrabGlasses() {
 }
 
 // TideShoes simulates a person tiding their shoes
-func (p *Person) TideShoes() {
+// returns true when done
+func (p *Person) TideShoes(wg *sync.WaitGroup) {
 
 	dur := waitRandomTime(20, 35)
 	p.GettingReadyTime += dur
 
 	fmt.Printf("%s tides the shoes \n It took %s %d seconds\n\n", p.Name, p.Name, dur)
 
+	wg.Done()
 }
 
 // CloseWindow simulates a person closing the windows

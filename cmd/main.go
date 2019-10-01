@@ -30,7 +30,6 @@ func main() {
 		windowClosedC <- false
 		fanOffC <- false
 
-		time.Sleep(time.Millisecond * 100)
 		gettingReadyWG.Done()
 	}()
 

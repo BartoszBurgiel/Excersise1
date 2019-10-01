@@ -37,7 +37,7 @@ func (p *Person) TideShoes(wg *sync.WaitGroup) {
 	dur := waitRandomTime(20, 35)
 	p.GettingReadyTime += dur
 
-	fmt.Printf("%s tides the shoes \n It took %s %d seconds\n\n", p.Name, p.Name, dur)
+	fmt.Printf("%s ties the shoes \n It took %s %d seconds\n\n", p.Name, p.Name, dur)
 
 	wg.Done()
 }

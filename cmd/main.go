@@ -48,10 +48,14 @@ func main() {
 	// After all persons got ready start the alarm part
 	gettingReadyWG.Wait()
 
+	done := make(chan struct{})
+
 	go func() {
+
 		// Arm the alarm
 		alarm := time.NewTicker(time.Millisecond)
 
+		// Controll the execution of tiding shoes by the persons
 		var shoesWg sync.WaitGroup
 
 		ignitionTime := time.Now()
@@ -65,9 +69,9 @@ func main() {
 		// Whitespace
 		fmt.Println("")
 
-		for {
+		shoesWg.Wait()
 
-			shoesWg.Wait()
+		for {
 
 			select {
 			case <-alarm.C:
@@ -77,14 +81,15 @@ func main() {
 
 					alarm.Stop()
 					fmt.Println("Alarm is armed")
-					return
+
+					done <- struct{}{}
+
 				}
 			}
 		}
 	}()
 
-	// :c
-	time.Sleep(time.Second)
+	<-done
 }
 
 // morning routine describes a morning routine for each person
